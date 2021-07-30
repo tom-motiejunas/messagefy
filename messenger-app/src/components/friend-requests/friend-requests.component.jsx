@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import "./friend-requests.style.css";
 
@@ -6,6 +6,11 @@ import DefaultPic from "../../assets/img/default-profile.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
+
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { selectFriendRequests } from "../../redux/friend-request/friend-request.selector";
+import { setFriendRequests } from "../../redux/friend-request/friend-request.action";
 
 async function getFriendRequest() {
   try {
@@ -83,15 +88,14 @@ async function declineFriendRequest(friendRequestId, setFriendRequests) {
   }
 }
 
-async function updateFriendRequests(setFriendRequests) {
+async function updateFriendRequests(setFriendRequests, friendRequests) {
   const data = await getFriendRequest();
   setFriendRequests(data);
 }
 
-function FriendRequests() {
-  const [friendRequests, setFriendRequests] = useState(0);
+function FriendRequests({ friendRequests, setFriendRequests }) {
   useEffect(() => {
-    updateFriendRequests(setFriendRequests);
+    updateFriendRequests(setFriendRequests, friendRequests);
   }, []);
 
   return (
@@ -100,7 +104,6 @@ function FriendRequests() {
 
       {friendRequests
         ? friendRequests.map((el) => {
-            console.log(el);
             return (
               <div
                 className="people-cont"
@@ -141,4 +144,12 @@ function FriendRequests() {
   );
 }
 
-export default FriendRequests;
+const mapStateToProps = createStructuredSelector({
+  friendRequests: selectFriendRequests,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setFriendRequests: (request) => dispatch(setFriendRequests(request)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FriendRequests);

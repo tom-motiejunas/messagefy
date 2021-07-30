@@ -1,26 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 
 import "./header.style.css";
-
 import DefaultPic from "../../assets/img/default-profile.png";
 
 import { Link, Redirect } from "react-router-dom";
 
-// TODO implement these function (logout clears localStorage user, signin redirects to /sign-in)
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { selectCurrentUser } from "../../redux/user/user.selector";
+import { setCurrentUser } from "../../redux/user/user.action";
 
-function logoutFunc(setUser, setToSignIn, setRedirect) {
-  setUser();
+function logoutFunc(setCurrentUser) {
+  setCurrentUser("");
   localStorage.removeItem("user");
-  setToSignIn(false);
-  setRedirect(true);
-}
-function signInFunc(setToSignIn) {
-  setToSignIn(true);
 }
 
-function Header({ user, setUser, setRedirect }) {
-  const [toSignIn, setToSignIn] = useState(false);
-
+function Header({ user, setCurrentUser }) {
   return (
     <nav className="header-box">
       <div className="logo">
@@ -32,19 +27,23 @@ function Header({ user, setUser, setRedirect }) {
         <img src={DefaultPic} alt="profile-pic" className="profile-pic" />
         <div className="hide user-box">
           {user ? (
-            <button
-              onClick={() => logoutFunc(setUser, setToSignIn, setRedirect)}
-            >
-              Logout
-            </button>
+            <button onClick={() => logoutFunc(setCurrentUser)}>Logout</button>
           ) : (
-            <button onClick={() => signInFunc(setToSignIn)}>Sign In</button>
+            <button>Sign In</button>
           )}
         </div>
       </div>
-      {toSignIn ? <Redirect to="/sign-in"></Redirect> : null}
+      {!user ? <Redirect to="/sign-in"></Redirect> : null}
     </nav>
   );
 }
 
-export default Header;
+const mapStateToProps = createStructuredSelector({
+  user: selectCurrentUser,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

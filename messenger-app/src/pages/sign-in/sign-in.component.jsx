@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import { Redirect } from "react-router-dom";
+
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { setCurrentUser } from "../../redux/user/user.action";
+import { selectCurrentUser } from "../../redux/user/user.selector";
 
 import "./sign-in.style.css";
 
-async function handleSignIn(e, setUser, setRedirect) {
+async function handleSignIn(e, setCurrentUser) {
   try {
     e.preventDefault();
     const email = e.target[0].value;
     const password = e.target[1].value;
-    console.log(email, password);
     const data = {
       Email: email,
       Password: password,
@@ -28,15 +32,14 @@ async function handleSignIn(e, setUser, setRedirect) {
     );
     const requestData = await request.json();
     if (request.ok === true) {
-      setUser(JSON.stringify(requestData));
+      setCurrentUser(JSON.stringify(requestData));
       localStorage.setItem("user", JSON.stringify(requestData));
-      setRedirect(false);
     }
   } catch (err) {
     console.error("failed to register", err);
   }
 }
-async function handleSignUp(e, setUser, setRedirect) {
+async function handleSignUp(e, setCurrentUser) {
   try {
     e.preventDefault();
     const userName = e.target[0].value;
@@ -65,20 +68,19 @@ async function handleSignUp(e, setUser, setRedirect) {
     );
     const requestData = await request.json();
     if (request.ok === true) {
-      setUser(JSON.stringify(requestData));
+      setCurrentUser(JSON.stringify(requestData));
       localStorage.setItem("user", JSON.stringify(requestData));
-      setRedirect(false);
     }
   } catch (err) {
     console.error("failed to register", err);
   }
 }
 
-function SignIn({ setUser, redirect, setRedirect }) {
+function SignIn({ user, setCurrentUser }) {
   return (
     <main className="form-container">
       {/* SIGN UP */}
-      <form onSubmit={(e) => handleSignUp(e, setUser, setRedirect)}>
+      <form onSubmit={(e) => handleSignUp(e, setCurrentUser)}>
         <h2>Sign Up</h2>
         <div>
           <label htmlFor="user-name">User Name</label>
@@ -109,7 +111,7 @@ function SignIn({ setUser, redirect, setRedirect }) {
         <input type="submit" value="Submit" />
       </form>
       {/* SIGN IN */}
-      <form onSubmit={(e) => handleSignIn(e, setUser, setRedirect)}>
+      <form onSubmit={(e) => handleSignIn(e, setCurrentUser)}>
         <h2>Sign In</h2>
         <div>
           <label htmlFor="email">Email</label>
@@ -126,9 +128,17 @@ function SignIn({ setUser, redirect, setRedirect }) {
         </div>
         <input type="submit" value="Submit" />
       </form>
-      {!redirect ? <Redirect exact to="/"></Redirect> : null}
+      {user ? <Redirect exact to="/"></Redirect> : null}
     </main>
   );
 }
 
-export default SignIn;
+const mapStateToProps = createStructuredSelector({
+  user: selectCurrentUser,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

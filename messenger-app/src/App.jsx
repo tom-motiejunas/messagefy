@@ -7,44 +7,52 @@ import Header from "./components/header/header.component";
 import Lobby from "./pages/lobby/lobby.component";
 import SignIn from "./pages/sign-in/sign-in.component";
 
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { selectCurrentUser } from "./redux/user/user.selector";
+import { setCurrentUser } from "./redux/user/user.action";
+
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
-function App() {
-  const [user, setUser] = useState();
+function App({ user, setCurrentUser }) {
   const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("user");
     if (loggedInUser) {
       const foundUser = JSON.parse(loggedInUser);
-      setUser(foundUser);
+      setCurrentUser(foundUser);
     } else {
       setRedirect(true);
     }
-  }, [redirect]);
+  }, []);
 
-  // console.log(!(user === undefined));
-  // console.log(user);
   return (
     <BrowserRouter>
-      <Header user={user} setUser={setUser} setRedirect={setRedirect}></Header>
+      {/* This needs setUser */}
+      <Header></Header>
       <Switch>
         <Route exact path="/chat-room">
           <ChatRoom></ChatRoom>
         </Route>
         <Route exact path="/sign-in">
-          <SignIn
-            setUser={setUser}
-            setRedirect={setRedirect}
-            redirect={redirect}
-          ></SignIn>
+          {/* This needs setUser */}
+          <SignIn></SignIn>
         </Route>
         <Route path="/">
-          {!redirect ? <Lobby></Lobby> : <Redirect to="/sign-in" />}
+          <Lobby></Lobby>
         </Route>
       </Switch>
     </BrowserRouter>
   );
 }
 
-export default App;
+const mapStateToProps = createStructuredSelector({
+  user: selectCurrentUser,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

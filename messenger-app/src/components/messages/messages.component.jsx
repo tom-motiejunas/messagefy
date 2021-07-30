@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 async function updateFriendList(setFriendList) {
   try {
     const userId = JSON.parse(localStorage.getItem("user"));
-
+    if (!userId) return;
     const options = {
       method: "GET",
       mode: "cors",

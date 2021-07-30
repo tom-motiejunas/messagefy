@@ -10,7 +10,7 @@ import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 async function getMessages(setMessage, url) {
   const request = await fetch(url);
   const messages = await request.json();
-  console.log(messages);
+
   // setMessage(messages);
 }
 
