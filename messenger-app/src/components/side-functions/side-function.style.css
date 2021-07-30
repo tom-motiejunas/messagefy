@@ -1,0 +1,17 @@
+.side-box {
+  margin: 2.5rem 0rem 3rem 3rem;
+  width: 200px;
+}
+.side-box button {
+  width: 200px;
+  height: 30px;
+  border-radius: 10px;
+  border: 1px solid black;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.active {
+  background-color: var(--tertiary-color);
+}

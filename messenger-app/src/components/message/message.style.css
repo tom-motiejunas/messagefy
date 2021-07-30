@@ -1,0 +1,15 @@
+.msg {
+  display: flex;
+  width: 300px;
+  margin: 0.5rem;
+  padding: 1rem;
+  border-radius: 20px;
+}
+
+.other-msg {
+  background-color: var(--background-color);
+}
+.user-msg {
+  background-color: var(--secondary-color);
+  align-self: flex-end;
+}
