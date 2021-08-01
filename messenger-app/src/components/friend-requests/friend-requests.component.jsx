@@ -34,14 +34,14 @@ async function getFriendRequest() {
     }
     return data;
   } catch (err) {
-    console.error("failed to send friend request", err);
+    console.error("failed to get friend requests", err);
   }
 }
 
 async function acceptFriendRequest(friendRequestId, setFriendRequests) {
   try {
     const userId = JSON.parse(localStorage.getItem("user"));
-
+    console.log(userId.token);
     const options = {
       method: "GET",
       mode: "cors",
@@ -54,10 +54,13 @@ async function acceptFriendRequest(friendRequestId, setFriendRequests) {
       `http://25.79.95.4:5001/api/friend/accept/${friendRequestId}/`,
       options
     );
+    console.log(request);
     if (request.ok === true) {
       console.log("Succesfully accepted friend requests");
       updateFriendRequests(setFriendRequests);
     }
+    const data = await request.json();
+    console.log(data);
   } catch (err) {
     console.error("failed to accept friend request", err);
   }
@@ -88,14 +91,14 @@ async function declineFriendRequest(friendRequestId, setFriendRequests) {
   }
 }
 
-async function updateFriendRequests(setFriendRequests, friendRequests) {
+async function updateFriendRequests(setFriendRequests) {
   const data = await getFriendRequest();
   setFriendRequests(data);
 }
 
 function FriendRequests({ friendRequests, setFriendRequests }) {
   useEffect(() => {
-    updateFriendRequests(setFriendRequests, friendRequests);
+    updateFriendRequests(setFriendRequests);
   }, []);
 
   return (
@@ -113,11 +116,12 @@ function FriendRequests({ friendRequests, setFriendRequests }) {
                 <img src={el.result.image || DefaultPic} alt="profile-pic" />
                 <div className="request-info">
                   <span className="name">{el.result.displayName}</span>
+                  {el.result}
                   <button
                     className="green"
                     onClick={() =>
                       acceptFriendRequest(
-                        el.result.conversationId,
+                        el.result.requestId,
                         setFriendRequests
                       )
                     }
@@ -128,7 +132,7 @@ function FriendRequests({ friendRequests, setFriendRequests }) {
                     className="red"
                     onClick={() =>
                       declineFriendRequest(
-                        el.result.conversationId,
+                        el.result.requestId,
                         setFriendRequests
                       )
                     }

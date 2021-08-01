@@ -22,6 +22,7 @@ async function makeFriendRequest() {
       `http://25.79.95.4:5001/api/friend/send/${username}/`,
       options
     );
+    console.log(request);
     if (request.ok === true) {
       console.log("Succesfully sended friend request");
     }

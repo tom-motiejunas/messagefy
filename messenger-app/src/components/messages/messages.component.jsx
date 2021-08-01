@@ -1,12 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import "./messages.style.css";
 
 import DefaultPic from "../../assets/img/default-profile.png";
 
 import { Link } from "react-router-dom";
+import TimeAgo from "react-timeago";
 
-async function updateFriendList(setFriendList) {
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { selectFriends } from "../../redux/friends/friend.selector";
+import { setFriends } from "../../redux/friends/friend.action";
+
+async function updateFriendList(setFriends) {
   try {
     const userId = JSON.parse(localStorage.getItem("user"));
     if (!userId) return;
@@ -22,31 +28,35 @@ async function updateFriendList(setFriendList) {
     const data = await request.json();
     if (request.ok === true) {
       console.log("Succesfully got all friends");
-      setFriendList(data);
+      setFriends(data);
     }
   } catch (err) {
     console.error("failed to get all friends", err);
   }
 }
 
-function Messages() {
-  const [friendList, setFriendList] = useState(null);
+function Messages({ friends, setFriends }) {
   useEffect(() => {
-    updateFriendList(setFriendList);
+    updateFriendList(setFriends);
+    console.log(friends);
   }, []);
 
   return (
     <main className="lobby-container">
-      {friendList
-        ? friendList.map((el) => {
+      {friends
+        ? friends.map((el) => {
+            console.log(el);
             return (
-              <Link to="/chat-room" key={el.id}>
+              <Link to={`/chat-room/${el.result.userName}`} key={el.id}>
                 <div className="people-cont">
                   <img src={el.result.image || DefaultPic} alt="profile-pic" />
                   <div className="info">
                     <span className="name">{el.result.displayName}</span>
                     <span className="last-msg">
-                      Lorem ipsum dolor sit amet.
+                      {el.result.lastMessageContent}
+                    </span>
+                    <span className="last-msg-time">
+                      <TimeAgo date={+el.result.lastMessageDate}></TimeAgo>
                     </span>
                   </div>
                 </div>
@@ -58,4 +68,12 @@ function Messages() {
   );
 }
 
-export default Messages;
+const mapStateToProps = createStructuredSelector({
+  friends: selectFriends,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setFriends: (friend) => dispatch(setFriends(friend)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Messages);

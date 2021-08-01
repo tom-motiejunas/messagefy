@@ -2,14 +2,12 @@ import React from "react";
 
 import "./message.style.css";
 
-function Message({ msgType }) {
+function Message({ content, sender }) {
+  const userId = JSON.parse(localStorage.getItem("user"));
+  console.log(userId);
   return (
-    <div className={`msg ${msgType}-msg`}>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores quae ab
-        accusantium iusto voluptate suscipit obcaecati exercitationem adipisci
-        laborum laboriosam.
-      </p>
+    <div className={`msg ${sender === userId.username ? "user" : "other"}-msg`}>
+      <p>{content}</p>
     </div>
   );
 }

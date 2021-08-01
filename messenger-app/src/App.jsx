@@ -12,9 +12,9 @@ import { createStructuredSelector } from "reselect";
 import { selectCurrentUser } from "./redux/user/user.selector";
 import { setCurrentUser } from "./redux/user/user.action";
 
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
-function App({ user, setCurrentUser }) {
+function App({ setCurrentUser }) {
   const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ function App({ user, setCurrentUser }) {
       {/* This needs setUser */}
       <Header></Header>
       <Switch>
-        <Route exact path="/chat-room">
+        <Route path="/chat-room">
           <ChatRoom></ChatRoom>
         </Route>
         <Route exact path="/sign-in">

@@ -20,8 +20,8 @@
 .people-cont:hover {
   background-color: var(--background-color);
 }
-.people-cont span:last-child {
-  font-size: 12px;
+.people-cont span:nth-child(n + 2) {
+  font-size: 13px;
 }
 .info {
   padding-left: 0.5rem;
