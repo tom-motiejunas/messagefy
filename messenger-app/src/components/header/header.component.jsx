@@ -16,6 +16,7 @@ function logoutFunc(setCurrentUser) {
 }
 
 function Header({ user, setCurrentUser }) {
+  if (!user) return null;
   return (
     <nav className="header-box">
       <div className="logo">
@@ -24,13 +25,16 @@ function Header({ user, setCurrentUser }) {
         </Link>
       </div>
       <div className="profile-box">
-        <img src={DefaultPic} alt="profile-pic" className="profile-pic" />
-        <div className="hide user-box">
-          {user ? (
-            <button onClick={() => logoutFunc(setCurrentUser)}>Logout</button>
-          ) : (
-            <button>Sign In</button>
-          )}
+        <span>{user.displayName}</span>
+        <div>
+          <img src={DefaultPic} alt="profile-pic" className="profile-pic" />
+          <div className="hide user-box">
+            {user ? (
+              <button onClick={() => logoutFunc(setCurrentUser)}>Logout</button>
+            ) : (
+              <button>Sign In</button>
+            )}
+          </div>
         </div>
       </div>
       {!user ? <Redirect to="/sign-in"></Redirect> : null}

@@ -1,11 +1,31 @@
 .msg {
   display: flex;
+  position: relative;
+  justify-content: space-between;
   width: 300px;
   margin: 0.5rem;
   padding: 1rem;
   border-radius: 20px;
 }
-
+.msg button {
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: none;
+}
+.msg button:last-child {
+  top: 10px;
+  right: 35px;
+}
+.msg:hover button {
+  display: block;
+}
+.msg svg {
+  font-size: 15px;
+}
 .other-msg {
   background-color: var(--background-color);
 }

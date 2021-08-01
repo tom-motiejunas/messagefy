@@ -104,7 +104,6 @@ function FriendRequests({ friendRequests, setFriendRequests }) {
   return (
     <section className="friend-request-box">
       <h2>All Your Friend Requests</h2>
-
       {friendRequests
         ? friendRequests.map((el) => {
             return (
@@ -116,29 +115,34 @@ function FriendRequests({ friendRequests, setFriendRequests }) {
                 <img src={el.result.image || DefaultPic} alt="profile-pic" />
                 <div className="request-info">
                   <span className="name">{el.result.displayName}</span>
-                  {el.result}
-                  <button
-                    className="green"
-                    onClick={() =>
-                      acceptFriendRequest(
-                        el.result.requestId,
-                        setFriendRequests
-                      )
-                    }
-                  >
-                    <FontAwesomeIcon icon={faCheck}></FontAwesomeIcon>
-                  </button>
-                  <button
-                    className="red"
-                    onClick={() =>
-                      declineFriendRequest(
-                        el.result.requestId,
-                        setFriendRequests
-                      )
-                    }
-                  >
-                    <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
-                  </button>
+                  {!el.result.isOutbound ? (
+                    <div className="btn-box">
+                      <button
+                        className="green"
+                        onClick={() =>
+                          acceptFriendRequest(
+                            el.result.requestId,
+                            setFriendRequests
+                          )
+                        }
+                      >
+                        <FontAwesomeIcon icon={faCheck}></FontAwesomeIcon>
+                      </button>
+                      <button
+                        className="red"
+                        onClick={() =>
+                          declineFriendRequest(
+                            el.result.requestId,
+                            setFriendRequests
+                          )
+                        }
+                      >
+                        <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
+                      </button>
+                    </div>
+                  ) : (
+                    <span>Sended</span>
+                  )}
                 </div>
               </div>
             );

@@ -6,9 +6,6 @@ import Message from "../../components/message/message.component";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import { selectFriends } from "../../redux/friends/friend.selector";
 
 async function getMessages(setMessage, friendsUsername) {
   try {
@@ -26,7 +23,10 @@ async function getMessages(setMessage, friendsUsername) {
       `http://25.79.95.4:5001/api/message/${friendsUsername}/-1`,
       options
     );
-    const messages = await request.json();
+    let messages = await request.json();
+    messages = messages.sort((el1, el2) => {
+      return el2.result.date - el1.result.date;
+    });
     setMessage(messages);
     if (request.ok === true) {
       console.log("Succesfully got all messages");
@@ -67,6 +67,7 @@ async function postMsg(msg, friendsUsername) {
 function ChatRoom() {
   const [message, setMessage] = useState([]);
   const username = document.URL.split("/").pop();
+
   useEffect(() => {
     getMessages(setMessage, username);
   }, []);
@@ -81,6 +82,7 @@ function ChatRoom() {
                   key={el.result.messageId}
                   content={el.result.content}
                   sender={el.result.senderName}
+                  id={el.result.messageId}
                 ></Message>
               );
             })
@@ -91,10 +93,7 @@ function ChatRoom() {
         <button
           className="send-btn"
           onClick={() => {
-            postMsg(
-              document.querySelector(".message-field").value,
-              friends[0].result.userName
-            );
+            postMsg(document.querySelector(".message-field").value, username);
           }}
         >
           <FontAwesomeIcon icon={faPaperPlane}></FontAwesomeIcon>

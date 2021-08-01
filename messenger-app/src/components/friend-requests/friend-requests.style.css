@@ -21,6 +21,9 @@
   padding-right: 1rem;
   font-size: 18px;
 }
+.btn-box {
+  display: flex;
+}
 .request-info button {
   width: 30px;
   border: none;

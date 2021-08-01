@@ -27,8 +27,14 @@
   cursor: pointer;
 }
 .profile-box {
+  display: flex;
+  align-items: center;
   position: relative;
 }
+.profile-box span {
+  padding-right: 1rem;
+}
+
 .profile-pic {
   cursor: pointer;
 }
@@ -38,7 +44,7 @@
   align-items: center;
   justify-content: center;
   position: absolute;
-  left: -37.5px;
+  left: 10px;
   width: 125px;
   height: 65px;
   border-radius: 10px;

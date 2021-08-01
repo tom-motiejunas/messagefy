@@ -38,14 +38,12 @@ async function updateFriendList(setFriends) {
 function Messages({ friends, setFriends }) {
   useEffect(() => {
     updateFriendList(setFriends);
-    console.log(friends);
   }, []);
 
   return (
     <main className="lobby-container">
       {friends
         ? friends.map((el) => {
-            console.log(el);
             return (
               <Link to={`/chat-room/${el.result.userName}`} key={el.id}>
                 <div className="people-cont">
@@ -56,7 +54,9 @@ function Messages({ friends, setFriends }) {
                       {el.result.lastMessageContent}
                     </span>
                     <span className="last-msg-time">
-                      <TimeAgo date={+el.result.lastMessageDate}></TimeAgo>
+                      {el.result.lastMessageDate ? (
+                        <TimeAgo date={+el.result.lastMessageDate}></TimeAgo>
+                      ) : null}
                     </span>
                   </div>
                 </div>
