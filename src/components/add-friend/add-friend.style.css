@@ -1,0 +1,44 @@
+.friend-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 700px;
+  max-width: 1100px;
+  flex: 1;
+  margin: 2rem 4rem;
+  overflow: auto;
+}
+.friend-box h1 {
+  margin: 0;
+  padding: 0;
+}
+.friend-box span {
+  padding: 0.7rem 0;
+}
+
+.search-box {
+  display: flex;
+  justify-content: center;
+}
+
+.friend-box .search-box input {
+  min-width: 400px;
+  height: 34px;
+  border-radius: 10px 0 0 10px;
+  border: 1px solid var(--primary-color);
+  padding: 0.5rem;
+  font-size: 20px;
+}
+.friend-box .search-box input:focus {
+  outline: none;
+}
+.search-box button {
+  border-radius: 0 10px 10px 0;
+  border: none;
+  background-color: var(--tertiary-color);
+  padding: 0.5rem;
+  font-size: 14px;
+  width: 30px;
+  cursor: pointer;
+}
