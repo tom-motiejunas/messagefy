@@ -13,6 +13,10 @@
   margin: 1rem auto;
 }
 
+.logo-pic {
+  width: 70px;
+}
+
 .logo {
   width: 100%;
   font-family: "Fuggles", cursive;
@@ -27,14 +31,9 @@
   cursor: pointer;
 }
 .profile-box {
-  display: flex;
-  align-items: center;
   position: relative;
+  text-align: center;
 }
-.profile-box span {
-  padding-right: 1rem;
-}
-
 .profile-pic {
   cursor: pointer;
 }
@@ -44,7 +43,7 @@
   align-items: center;
   justify-content: center;
   position: absolute;
-  left: 10px;
+  right: -28px;
   width: 125px;
   height: 65px;
   border-radius: 10px;

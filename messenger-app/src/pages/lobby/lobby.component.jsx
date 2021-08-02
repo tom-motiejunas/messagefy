@@ -31,6 +31,7 @@ function Lobby({ user }) {
     <div className="lobby-box">
       {!user ? <Redirect to="/sign-in"></Redirect> : null}
       <SideFunction setRender={setRender}></SideFunction>
+
       {whatToRender(render)}
     </div>
   );

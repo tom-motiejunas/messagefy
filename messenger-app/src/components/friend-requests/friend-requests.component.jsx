@@ -12,6 +12,8 @@ import { createStructuredSelector } from "reselect";
 import { selectFriendRequests } from "../../redux/friend-request/friend-request.selector";
 import { setFriendRequests } from "../../redux/friend-request/friend-request.action";
 
+import Loading from "../loading/loading.component";
+
 async function getFriendRequest() {
   try {
     const userId = JSON.parse(localStorage.getItem("user"));
@@ -104,50 +106,52 @@ function FriendRequests({ friendRequests, setFriendRequests }) {
   return (
     <section className="friend-request-box">
       <h2>All Your Friend Requests</h2>
-      {friendRequests
-        ? friendRequests.map((el) => {
-            return (
-              <div
-                className="people-cont"
-                style={{ cursor: "default" }}
-                key={el.id}
-              >
-                <img src={el.result.image || DefaultPic} alt="profile-pic" />
-                <div className="request-info">
-                  <span className="name">{el.result.displayName}</span>
-                  {!el.result.isOutbound ? (
-                    <div className="btn-box">
-                      <button
-                        className="green"
-                        onClick={() =>
-                          acceptFriendRequest(
-                            el.result.requestId,
-                            setFriendRequests
-                          )
-                        }
-                      >
-                        <FontAwesomeIcon icon={faCheck}></FontAwesomeIcon>
-                      </button>
-                      <button
-                        className="red"
-                        onClick={() =>
-                          declineFriendRequest(
-                            el.result.requestId,
-                            setFriendRequests
-                          )
-                        }
-                      >
-                        <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
-                      </button>
-                    </div>
-                  ) : (
-                    <span>Sended</span>
-                  )}
-                </div>
+      {Array.isArray(friendRequests) ? (
+        friendRequests.map((el) => {
+          return (
+            <div
+              className="people-cont"
+              style={{ cursor: "default" }}
+              key={el.id}
+            >
+              <img src={el.result.image || DefaultPic} alt="profile-pic" />
+              <div className="request-info">
+                <span className="name">{el.result.displayName}</span>
+                {!el.result.isOutbound ? (
+                  <div className="btn-box">
+                    <button
+                      className="green"
+                      onClick={() =>
+                        acceptFriendRequest(
+                          el.result.requestId,
+                          setFriendRequests
+                        )
+                      }
+                    >
+                      <FontAwesomeIcon icon={faCheck}></FontAwesomeIcon>
+                    </button>
+                    <button
+                      className="red"
+                      onClick={() =>
+                        declineFriendRequest(
+                          el.result.requestId,
+                          setFriendRequests
+                        )
+                      }
+                    >
+                      <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
+                    </button>
+                  </div>
+                ) : (
+                  <span>Sended</span>
+                )}
               </div>
-            );
-          })
-        : null}
+            </div>
+          );
+        })
+      ) : (
+        <Loading></Loading>
+      )}
     </section>
   );
 }

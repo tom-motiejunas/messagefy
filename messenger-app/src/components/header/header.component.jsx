@@ -2,6 +2,7 @@ import React from "react";
 
 import "./header.style.css";
 import DefaultPic from "../../assets/img/default-profile.png";
+import logoPic from "../../assets/img/logo.svg";
 
 import { Link, Redirect } from "react-router-dom";
 
@@ -19,6 +20,7 @@ function Header({ user, setCurrentUser }) {
   if (!user) return null;
   return (
     <nav className="header-box">
+      <img src={logoPic} alt="logo-pic" className="logo-pic" />
       <div className="logo">
         <Link to="/" className="header-anchor">
           <h1>Messagefy</h1>
@@ -26,15 +28,13 @@ function Header({ user, setCurrentUser }) {
       </div>
       <div className="profile-box">
         <span>{user.displayName}</span>
-        <div>
-          <img src={DefaultPic} alt="profile-pic" className="profile-pic" />
-          <div className="hide user-box">
-            {user ? (
-              <button onClick={() => logoutFunc(setCurrentUser)}>Logout</button>
-            ) : (
-              <button>Sign In</button>
-            )}
-          </div>
+        <img src={DefaultPic} alt="profile-pic" className="profile-pic" />
+        <div className="hide user-box">
+          {user ? (
+            <button onClick={() => logoutFunc(setCurrentUser)}>Logout</button>
+          ) : (
+            <button>Sign In</button>
+          )}
         </div>
       </div>
       {!user ? <Redirect to="/sign-in"></Redirect> : null}

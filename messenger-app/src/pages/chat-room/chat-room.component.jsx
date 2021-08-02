@@ -36,8 +36,10 @@ async function getMessages(setMessage, friendsUsername) {
   }
 }
 
-async function postMsg(msg, friendsUsername) {
+async function postMsg(el, friendsUsername) {
   try {
+    const msg = el.value;
+    el.value = "";
     const userId = JSON.parse(localStorage.getItem("user"));
     const data = {
       Content: msg,
@@ -93,7 +95,7 @@ function ChatRoom() {
         <button
           className="send-btn"
           onClick={() => {
-            postMsg(document.querySelector(".message-field").value, username);
+            postMsg(document.querySelector(".message-field"), username);
           }}
         >
           <FontAwesomeIcon icon={faPaperPlane}></FontAwesomeIcon>
