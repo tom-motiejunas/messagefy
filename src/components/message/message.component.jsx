@@ -22,7 +22,7 @@ async function sendNewMsg({ current }, msgId) {
       body: JSON.stringify(data),
     };
     const request = await fetch(
-      `http://25.79.95.4:5001/api/message/edit/${msgId}`,
+      `http://10.144.0.1:5001/api/message/edit/${msgId}`,
       options
     );
     if (request.ok === true) {
@@ -45,7 +45,7 @@ async function deleteMsg(msgId) {
       },
     };
     const request = await fetch(
-      `http://25.79.95.4:5001/api/message/delete/${msgId}`,
+      `http://10.144.0.1:5001/api/message/delete/${msgId}`,
       options
     );
     if (request.ok === true) {

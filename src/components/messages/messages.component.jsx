@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./messages.style.css";
 
@@ -11,11 +11,14 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { selectFriends } from "../../redux/friends/friend.selector";
 import { setFriends } from "../../redux/friends/friend.action";
+import Loading from "../loading/loading.component";
 
-async function updateFriendList(setFriends) {
+async function updateFriendList(setFriends, setLoading) {
   try {
     const userId = JSON.parse(localStorage.getItem("user"));
     if (!userId) return;
+    setLoading(true);
+
     const options = {
       method: "GET",
       mode: "cors",
@@ -24,24 +27,28 @@ async function updateFriendList(setFriends) {
         Authorization: `Bearer ${userId.token}`,
       },
     };
-    const request = await fetch(`http://25.79.95.4:5001/api/friend/`, options);
+    const request = await fetch(`http://10.144.0.1:5001/api/friend/`, options);
     const data = await request.json();
     if (request.ok === true) {
       console.log("Succesfully got all friends");
       setFriends(data);
     }
+    setLoading(false);
   } catch (err) {
     console.error("failed to get all friends", err);
   }
 }
 
 function Messages({ friends, setFriends }) {
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    updateFriendList(setFriends);
+    updateFriendList(setFriends, setLoading);
   }, []);
 
   return (
     <main className="lobby-container">
+      {loading ? <Loading></Loading> : null}
       {friends
         ? friends.map((el) => {
             return (

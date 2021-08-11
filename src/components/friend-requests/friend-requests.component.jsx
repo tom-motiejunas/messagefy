@@ -12,6 +12,8 @@ import { createStructuredSelector } from "reselect";
 import { selectFriendRequests } from "../../redux/friend-request/friend-request.selector";
 import { setFriendRequests } from "../../redux/friend-request/friend-request.action";
 
+import Loading from "../loading/loading.component";
+
 async function getFriendRequest() {
   try {
     const userId = JSON.parse(localStorage.getItem("user"));
@@ -25,7 +27,7 @@ async function getFriendRequest() {
       },
     };
     const request = await fetch(
-      `http://25.79.95.4:5001/api/friend/requests/`,
+      `http://10.144.0.1:5001/api/friend/requests/`,
       options
     );
     const data = await request.json();
@@ -51,7 +53,7 @@ async function acceptFriendRequest(friendRequestId, setFriendRequests) {
       },
     };
     const request = await fetch(
-      `http://25.79.95.4:5001/api/friend/accept/${friendRequestId}/`,
+      `http://10.144.0.1:5001/api/friend/accept/${friendRequestId}/`,
       options
     );
     console.log(request);
@@ -79,7 +81,7 @@ async function declineFriendRequest(friendRequestId, setFriendRequests) {
       },
     };
     const request = await fetch(
-      `http://25.79.95.4:5001/api/friend/decline/${friendRequestId}/`,
+      `http://10.144.0.1:5001/api/friend/decline/${friendRequestId}/`,
       options
     );
     if (request.ok === true) {
@@ -104,50 +106,52 @@ function FriendRequests({ friendRequests, setFriendRequests }) {
   return (
     <section className="friend-request-box">
       <h2>All Your Friend Requests</h2>
-      {friendRequests
-        ? friendRequests.map((el) => {
-            return (
-              <div
-                className="people-cont"
-                style={{ cursor: "default" }}
-                key={el.id}
-              >
-                <img src={el.result.image || DefaultPic} alt="profile-pic" />
-                <div className="request-info">
-                  <span className="name">{el.result.displayName}</span>
-                  {!el.result.isOutbound ? (
-                    <div className="btn-box">
-                      <button
-                        className="green"
-                        onClick={() =>
-                          acceptFriendRequest(
-                            el.result.requestId,
-                            setFriendRequests
-                          )
-                        }
-                      >
-                        <FontAwesomeIcon icon={faCheck}></FontAwesomeIcon>
-                      </button>
-                      <button
-                        className="red"
-                        onClick={() =>
-                          declineFriendRequest(
-                            el.result.requestId,
-                            setFriendRequests
-                          )
-                        }
-                      >
-                        <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
-                      </button>
-                    </div>
-                  ) : (
-                    <span>Sended</span>
-                  )}
-                </div>
+      {Array.isArray(friendRequests) ? (
+        friendRequests.map((el) => {
+          return (
+            <div
+              className="people-cont"
+              style={{ cursor: "default" }}
+              key={el.id}
+            >
+              <img src={el.result.image || DefaultPic} alt="profile-pic" />
+              <div className="request-info">
+                <span className="name">{el.result.displayName}</span>
+                {!el.result.isOutbound ? (
+                  <div className="btn-box">
+                    <button
+                      className="green"
+                      onClick={() =>
+                        acceptFriendRequest(
+                          el.result.requestId,
+                          setFriendRequests
+                        )
+                      }
+                    >
+                      <FontAwesomeIcon icon={faCheck}></FontAwesomeIcon>
+                    </button>
+                    <button
+                      className="red"
+                      onClick={() =>
+                        declineFriendRequest(
+                          el.result.requestId,
+                          setFriendRequests
+                        )
+                      }
+                    >
+                      <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
+                    </button>
+                  </div>
+                ) : (
+                  <span>Sended</span>
+                )}
               </div>
-            );
-          })
-        : null}
+            </div>
+          );
+        })
+      ) : (
+        <Loading></Loading>
+      )}
     </section>
   );
 }

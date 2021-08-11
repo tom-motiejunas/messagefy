@@ -1,17 +1,29 @@
+.logo-img {
+  margin: 3rem auto 0 auto;
+  max-height: 70px;
+  width: 100%;
+}
+
 .form-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: flex-start;
-  width: 600px;
+  width: 700px;
+  min-height: 425px;
   margin: auto;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  height: 50vh;
   margin-top: 1rem;
+}
+form h2 {
+  font-weight: 500;
+  padding-bottom: 0.5rem;
 }
 form div {
   display: flex;
@@ -24,21 +36,23 @@ form div {
 form div label {
   width: 100%;
   padding-bottom: 0.2rem;
+  font-weight: 500;
 }
 form div > input {
   padding: 0.5rem;
   font-size: 20px;
 }
 form div > input:focus {
-  outline: var(--tertiary-color) 2px solid;
+  outline: none;
+  border: var(--secondary-color) 2px solid;
 }
 form > input {
+  flex-shrink: 0;
   border: 1px solid black;
   height: 40px;
   width: 150px;
   margin-top: 0.7rem;
   cursor: pointer;
-  border-radius: 10px;
   opacity: 0.7;
   font-size: 18px;
   text-align: center;
@@ -46,4 +60,21 @@ form > input {
 }
 form > input:hover {
   opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .logo {
+    margin: 1rem auto;
+  }
+  .form-container {
+    flex-direction: column-reverse;
+    height: auto;
+  }
+  form {
+    justify-content: center;
+    height: auto;
+  }
+  form:first-child {
+    margin: 2rem auto;
+  }
 }
