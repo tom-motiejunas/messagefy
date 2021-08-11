@@ -27,7 +27,7 @@ async function getFriendRequest() {
       },
     };
     const request = await fetch(
-      `http://25.79.95.4:5001/api/friend/requests/`,
+      `http://10.144.0.1:5001/api/friend/requests/`,
       options
     );
     const data = await request.json();
@@ -53,7 +53,7 @@ async function acceptFriendRequest(friendRequestId, setFriendRequests) {
       },
     };
     const request = await fetch(
-      `http://25.79.95.4:5001/api/friend/accept/${friendRequestId}/`,
+      `http://10.144.0.1:5001/api/friend/accept/${friendRequestId}/`,
       options
     );
     console.log(request);
@@ -81,7 +81,7 @@ async function declineFriendRequest(friendRequestId, setFriendRequests) {
       },
     };
     const request = await fetch(
-      `http://25.79.95.4:5001/api/friend/decline/${friendRequestId}/`,
+      `http://10.144.0.1:5001/api/friend/decline/${friendRequestId}/`,
       options
     );
     if (request.ok === true) {

@@ -32,7 +32,7 @@ async function handleSignIn(e, setCurrentUser, setLoading) {
       body: JSON.stringify(data),
     };
     const request = await fetch(
-      "http://25.79.95.4:5001/api/account/login",
+      "http://10.144.0.1:5001/api/account/login",
       options
     );
     const requestData = await request.json();
@@ -70,7 +70,7 @@ async function handleSignUp(e, setCurrentUser, setLoading) {
       body: JSON.stringify(data),
     };
     const request = await fetch(
-      "http://25.79.95.4:5001/api/account/register",
+      "http://10.144.0.1:5001/api/account/register",
       options
     );
     const requestData = await request.json();

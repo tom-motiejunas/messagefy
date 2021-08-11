@@ -3,7 +3,7 @@
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-  height: 100vh;
+  height: 80vh;
   margin: auto;
   max-width: 1100px;
 }
@@ -46,4 +46,19 @@
 .send-btn svg {
   color: var(--secondary-color);
   font-size: 18px;
+}
+
+.go-back-container {
+  left: 30px;
+  top: 125px;
+  position: absolute;
+  width: 30px;
+}
+
+.go-back {
+  background: none;
+  border: none;
+  color: var(--tertiary-color);
+  font-size: 30px;
+  cursor: pointer;
 }

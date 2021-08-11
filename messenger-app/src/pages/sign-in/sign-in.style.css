@@ -1,5 +1,5 @@
 .logo-img {
-  margin: 4.5rem auto 0 auto;
+  margin: 3rem auto 0 auto;
   max-height: 70px;
   width: 100%;
 }
@@ -7,9 +7,9 @@
 .form-container {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  max-width: 625px;
-  height: 58vh;
+  align-items: flex-start;
+  width: 700px;
+  min-height: 425px;
   margin: auto;
 }
 
@@ -47,6 +47,7 @@ form div > input:focus {
   border: var(--secondary-color) 2px solid;
 }
 form > input {
+  flex-shrink: 0;
   border: 1px solid black;
   height: 40px;
   width: 150px;
@@ -62,9 +63,6 @@ form > input:hover {
 }
 
 @media (max-width: 768px) {
-  body {
-    overflow: auto;
-  }
   .logo {
     margin: 1rem auto;
   }

@@ -35,6 +35,7 @@ function Header({ user, setCurrentUser }) {
           ) : (
             <button>Sign In</button>
           )}
+          <button>Options</button>
         </div>
       </div>
       {!user ? <Redirect to="/sign-in"></Redirect> : null}

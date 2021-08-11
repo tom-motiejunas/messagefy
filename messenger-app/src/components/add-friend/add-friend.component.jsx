@@ -20,7 +20,7 @@ async function makeFriendRequest(setLoading) {
       },
     };
     const request = await fetch(
-      `http://25.79.95.4:5001/api/friend/send/${username}/`,
+      `http://10.144.0.1:5001/api/friend/send/${username}/`,
       options
     );
     if (request.ok === true) {

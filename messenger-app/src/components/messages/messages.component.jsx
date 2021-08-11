@@ -27,7 +27,7 @@ async function updateFriendList(setFriends, setLoading) {
         Authorization: `Bearer ${userId.token}`,
       },
     };
-    const request = await fetch(`http://25.79.95.4:5001/api/friend/`, options);
+    const request = await fetch(`http://10.144.0.1:5001/api/friend/`, options);
     const data = await request.json();
     if (request.ok === true) {
       console.log("Succesfully got all friends");
