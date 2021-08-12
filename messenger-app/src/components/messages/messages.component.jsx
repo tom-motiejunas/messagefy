@@ -36,6 +36,7 @@ async function updateFriendList(setFriends, setLoading) {
     setLoading(false);
   } catch (err) {
     console.error("failed to get all friends", err);
+    setLoading(false);
   }
 }
 

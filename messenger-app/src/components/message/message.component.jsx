@@ -5,6 +5,8 @@ import "./message.style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTimes } from "@fortawesome/free-solid-svg-icons";
 
+import MsgLoad from "../message-load/message-load.component";
+
 async function sendNewMsg({ current }, msgId) {
   try {
     const userId = JSON.parse(localStorage.getItem("user"));
@@ -76,6 +78,7 @@ function Message({ content, sender, id }) {
       <p ref={messageField} onBlur={() => sendNewMsg(messageField, id)}>
         {content}
       </p>
+      {id === "loading" ? <MsgLoad></MsgLoad> : null}
       {sender.toLowerCase() === userId.username.toLowerCase() ? (
         <div className="btn-box">
           <button onClick={() => deleteMsg(id)}>
