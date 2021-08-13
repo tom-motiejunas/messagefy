@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import "./chat-room.style.css";
 
@@ -14,91 +14,49 @@ import { Link } from "react-router-dom";
 
 import { HubConnectionBuilder } from "@microsoft/signalr";
 
-// async function getMessages(setMessage, friendsUsername) {
-//   try {
-//     const userId = JSON.parse(localStorage.getItem("user"));
-//     if (!userId) return;
-//     const options = {
-//       method: "GET",
-//       mode: "cors",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: `Bearer ${userId.token}`,
-//       },
-//     };
-//     const request = await fetch(
-//       `http://10.144.0.1:5001/api/message/${friendsUsername}/0`,
-//       options
-//     );
-//     let messages = await request.json();
-//     messages = messages.sort((el1, el2) => {
-//       return el2.result.date - el1.result.date;
-//     });
-//     setMessage(messages);
-//     if (request.ok === true) {
-//       console.log("Succesfully got all messages");
-//     }
-//   } catch (err) {
-//     console.error("failed to get all messages", err);
-//   }
-// }
-
 function ChatRoom() {
   const [message, setMessage] = useState([]);
   const username = document.URL.split("/").pop();
 
   const [connection, setConnection] = useState(null);
 
-  async function addNewMsg(newMsg) {
-    const result = { result: newMsg };
-    let newMsgArr = [result, ...message];
+  const latestChat = useRef(null);
 
-    // Deletes temp msg's
-    newMsgArr = newMsgArr.filter((el) => el.messageId !== "loading");
-    setMessage(newMsgArr);
-  }
+  latestChat.current = message;
 
   async function postMsg(el, friendsUsername) {
     try {
-      // setMsgLoading(...msgLoading, msg)
-      const msg = el.value;
-      console.log(msg);
+      if (!connection) return;
+      const userMsg = el.value.trim();
+      if (userMsg === "") return;
+      const msg = userMsg;
       el.value = "";
+
       const userId = JSON.parse(localStorage.getItem("user"));
-      const tempMsg = {
+
+      const msgToSend = {
+        content: msg,
+      };
+      const msgToAdd = {
         messageId: "loading",
         content: msg,
         date: null,
         senderName: userId.username,
         dateEdited: null,
       };
-      addNewMsg(tempMsg);
-
-      const data = {
-        Content: msg,
-      };
-
-      const options = {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userId.token}`,
-        },
-        body: JSON.stringify(data),
-      };
-      const request = await fetch(
-        `http://10.144.0.1:5001/api/message/send/${friendsUsername}`,
-        options
+      setMessage([msgToAdd, ...message]);
+      let sendedMsg = await connection.invoke(
+        "PostMessage",
+        friendsUsername,
+        msgToSend
       );
-      if (request.ok === true) {
-        console.log("Succesfully sended messages");
-        const data = await request.json();
-        console.log(data);
-        addNewMsg(data);
-      }
+      const msgNoLoadArr = message.filter((el) => el.messageId !== "loading");
+      // random id generator
+      setMessage([sendedMsg, ...msgNoLoadArr]);
     } catch (err) {
-      console.error("failed to send message");
+      if (err.source === "HubException") {
+        console.error(`${e.message} : ${e.data.user}`);
+      }
     }
   }
 
@@ -132,14 +90,27 @@ function ChatRoom() {
     if (connection) {
       connection
         .start()
-        .then((result) => {
+        .then(() => {
           getMessages(connection);
-          connection.on("Received Msg", async (msg) => {
-            console.log("GOT MESSAGE");
-            addNewMsg(msg);
+          connection.on("ReceiveMessage", async (msg) => {
+            console.log(msg.senderName, username);
+            if (msg.senderName !== username) return;
+            setMessage([msg, ...latestChat.current]);
           });
           connection.on("ReceiveMessages", async (allMsgs) => {
             setMessage(allMsgs);
+          });
+          connection.on("UpdateMessage", async (msg) => {
+            const newChat = latestChat.current.map((el) =>
+              el.messageId === msg.messageId ? msg : el
+            );
+            setMessage(newChat);
+          });
+          connection.on("DeleteMessage", async (msg) => {
+            const newChat = latestChat.current.filter((el) => {
+              if (el.messageId !== msg.messageId) return el;
+            });
+            setMessage(newChat);
           });
         })
         .catch((err) => null);
@@ -158,10 +129,13 @@ function ChatRoom() {
           ? message.map((el) => {
               return (
                 <Message
-                  key={el.result.messageId}
-                  content={el.result.content}
-                  sender={el.result.senderName}
-                  id={el.result.messageId}
+                  key={el.messageId}
+                  content={el.content}
+                  sender={el.senderName}
+                  id={el.messageId}
+                  connection={connection}
+                  setMessage={setMessage}
+                  latestChat={latestChat}
                 ></Message>
               );
             })
