@@ -9,6 +9,32 @@
   margin: 2rem 4rem;
   overflow: auto;
 }
+.friend-cont {
+  display: flex;
+  width: 100%;
+}
+.friend-cont:hover {
+  background-color: var(--background-color);
+}
+.friend-cont:hover button {
+  display: block;
+}
+.ban-friend {
+  display: none;
+  width: 30px;
+  height: 30px;
+  align-self: center;
+  border: none;
+  font-size: 15px;
+  margin-right: 2rem;
+  border-radius: 5px;
+  opacity: 0.9;
+  cursor: pointer;
+  background-color: #ed4337;
+}
+.ban-friend:hover {
+  opacity: 0.7;
+}
 .people-cont {
   display: flex;
   justify-content: flex-start;
@@ -16,9 +42,6 @@
   padding: 1rem;
   width: 100%;
   cursor: pointer;
-}
-.people-cont:hover {
-  background-color: var(--background-color);
 }
 .people-cont span:nth-child(n + 2) {
   font-size: 13px;

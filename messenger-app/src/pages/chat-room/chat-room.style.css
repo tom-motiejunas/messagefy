@@ -16,6 +16,11 @@
   overflow: scroll;
   overflow-x: hidden;
 }
+.msg-box .seen-box {
+  text-align: start;
+  align-self: flex-end;
+  width: 300px;
+}
 .send-msg-box {
   display: flex;
   justify-content: center;

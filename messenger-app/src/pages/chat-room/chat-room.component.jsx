@@ -19,8 +19,10 @@ function ChatRoom() {
   const username = document.URL.split("/").pop();
 
   const [connection, setConnection] = useState(null);
+  const [seeners, setSeeners] = useState([]);
 
   const latestChat = useRef(null);
+  const userId = JSON.parse(localStorage.getItem("user"));
 
   latestChat.current = message;
 
@@ -31,8 +33,6 @@ function ChatRoom() {
       if (userMsg === "") return;
       const msg = userMsg;
       el.value = "";
-
-      const userId = JSON.parse(localStorage.getItem("user"));
 
       const msgToSend = {
         content: msg,
@@ -86,19 +86,36 @@ function ChatRoom() {
     }
   }
 
-  useEffect(async () => {
+  async function seenMessage(connection) {
+    try {
+      if (!connection) return;
+      console.log(userId.username);
+      setSeeners([...seeners, userId.username]);
+      await connection.invoke(
+        "SeenMessage",
+        username,
+        latestChat.current[0].messageId
+      );
+    } catch (err) {
+      if (err.source === "HubException") {
+        console.error(`${e.message} : ${e.data.user}`);
+      }
+    }
+  }
+
+  useEffect(() => {
     if (connection) {
       connection
         .start()
         .then(() => {
           getMessages(connection);
           connection.on("ReceiveMessage", async (msg) => {
-            console.log(msg.senderName, username);
             if (msg.senderName !== username) return;
             setMessage([msg, ...latestChat.current]);
           });
           connection.on("ReceiveMessages", async (allMsgs) => {
             setMessage(allMsgs);
+            seenMessage(connection);
           });
           connection.on("UpdateMessage", async (msg) => {
             const newChat = latestChat.current.map((el) =>
@@ -111,6 +128,10 @@ function ChatRoom() {
               if (el.messageId !== msg.messageId) return el;
             });
             setMessage(newChat);
+          });
+          connection.on("SeenMessage", async (msg) => {
+            console.log("seenMessage");
+            setSeeners([...seeners, username]);
           });
         })
         .catch((err) => null);
@@ -125,6 +146,11 @@ function ChatRoom() {
         </button>
       </Link>
       <section className="msg-box">
+        <div className="seen-box">
+          {seeners.length !== 0 ? (
+            <span>Seen by: {seeners.map((el) => `${el} `)}</span>
+          ) : null}
+        </div>
         {message.length !== 0
           ? message.map((el) => {
               return (
