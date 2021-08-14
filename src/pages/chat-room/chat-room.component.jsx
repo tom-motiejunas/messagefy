@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import "./chat-room.style.css";
 
@@ -14,76 +14,55 @@ import { Link } from "react-router-dom";
 
 import { HubConnectionBuilder } from "@microsoft/signalr";
 
-async function getMessages(setMessage, friendsUsername) {
-  try {
-    const userId = JSON.parse(localStorage.getItem("user"));
-    if (!userId) return;
-    const options = {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userId.token}`,
-      },
-    };
-    const request = await fetch(
-      `http://10.144.0.1:5001/api/message/${friendsUsername}/-1`,
-      options
-    );
-    let messages = await request.json();
-    messages = messages.sort((el1, el2) => {
-      return el2.result.date - el1.result.date;
-    });
-    setMessage(messages);
-    if (request.ok === true) {
-      console.log("Succesfully got all messages");
-    }
-  } catch (err) {
-    console.error("failed to get all messages", err);
-  }
-}
-
-async function postMsg(el, friendsUsername, setMessage, message) {
-  try {
-    const msg = el.value;
-    el.value = "";
-    const userId = JSON.parse(localStorage.getItem("user"));
-    const data = {
-      Content: msg,
-    };
-
-    const options = {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userId.token}`,
-      },
-      body: JSON.stringify(data),
-    };
-    const request = await fetch(
-      `http://10.144.0.1:5001/api/message/send/${friendsUsername}`,
-      options
-    );
-    if (request.ok === true) {
-      console.log("Succesfully sended messages");
-      const data = await request.json();
-      const newMsg = { result: data };
-      await setMessage([newMsg, ...message]);
-    }
-  } catch (err) {
-    console.error("failed to send message");
-  }
-}
-
 function ChatRoom() {
   const [message, setMessage] = useState([]);
   const username = document.URL.split("/").pop();
 
   const [connection, setConnection] = useState(null);
+  const [seeners, setSeeners] = useState([]);
+
+  const latestChat = useRef(null);
+
+  const userId = JSON.parse(localStorage.getItem("user"));
+
+  latestChat.current = message;
+
+  async function postMsg(el, friendsUsername, connection) {
+    try {
+      if (!connection) return;
+      const userMsg = el.value.trim();
+      if (userMsg === "") return;
+      const msg = userMsg;
+      el.value = "";
+
+      const msgToSend = {
+        content: msg,
+      };
+      const msgToAdd = {
+        messageId: "loading",
+        content: msg,
+        date: null,
+        senderName: userId.username,
+        dateEdited: null,
+      };
+      setMessage([msgToAdd, ...message]);
+      let sendedMsg = await connection.invoke(
+        "PostMessage",
+        friendsUsername,
+        msgToSend
+      );
+      const msgNoLoadArr = message.filter((el) => el.messageId !== "loading");
+      // random id generator
+      setMessage([sendedMsg, ...msgNoLoadArr]);
+      seenMessage(connection);
+    } catch (err) {
+      if (err.source === "HubException") {
+        console.error(`${e.message} : ${e.data.user}`);
+      }
+    }
+  }
 
   useEffect(async () => {
-    await getMessages(setMessage, username);
     const userToken = JSON.parse(localStorage.getItem("user"));
 
     const newConnection = new HubConnectionBuilder()
@@ -95,23 +74,77 @@ function ChatRoom() {
       .withAutomaticReconnect()
       .build();
 
-    setConnection(newConnection);
+    await setConnection(newConnection);
   }, []);
 
-  useEffect(async () => {
+  async function getMessages(connection) {
+    try {
+      if (!connection) return;
+      await connection.invoke("DownloadMessages", username, 0);
+    } catch (err) {
+      if (err.source === "HubException") {
+        console.error(`${e.message} : ${e.data.user}`);
+      }
+    }
+  }
+
+  async function seenMessage(connection) {
+    try {
+      if (!connection) return;
+      await connection.invoke(
+        "SeenMessage",
+        username,
+        latestChat.current[0].messageId
+      );
+      const friendSeen = await connection.invoke("GetSeenMessageId", username);
+      // Setting seen messages of people
+      setSeeners([
+        [userId.username, latestChat.current[0].messageId],
+        [username, friendSeen.messageId],
+      ]);
+    } catch (err) {
+      if (err.source === "HubException") {
+        console.error(`${e.message} : ${e.data.user}`);
+      }
+    }
+  }
+
+  useEffect(() => {
     if (connection) {
       connection
         .start()
-        .then((result) => {
-          console.log("Connected!");
-          connection.on("Received Msg", (msg) => {
-            console.log("GOT MESSAGE");
-            const result = { result: msg };
-            const newMsgArr = [result, ...message];
-            setMessage(newMsgArr);
+        .then(() => {
+          getMessages(connection);
+          connection.on("ReceiveMessage", async (msg) => {
+            if (msg.senderName !== username) return;
+            setMessage([msg, ...latestChat.current]);
+            seenMessage(connection);
+          });
+          connection.on("ReceiveMessages", async (allMsgs) => {
+            setMessage(allMsgs);
+            seenMessage(connection);
+          });
+          connection.on("UpdateMessage", async (msg) => {
+            const newChat = latestChat.current.map((el) =>
+              el.messageId === msg.messageId ? msg : el
+            );
+            setMessage(newChat);
+          });
+          connection.on("DeleteMessage", async (msg) => {
+            const newChat = latestChat.current.filter((el) => {
+              if (el.messageId !== msg.messageId) return el;
+            });
+            setMessage(newChat);
+          });
+          connection.on("SeenMessage", async (msg) => {
+            console.log("seenMessage");
+            setSeeners([
+              [userId.username, msg.messageId],
+              [username, msg.messageId],
+            ]);
           });
         })
-        .catch((err) => console.error(err));
+        .catch((err) => null);
     }
   }, [connection]);
 
@@ -126,12 +159,23 @@ function ChatRoom() {
         {message.length !== 0
           ? message.map((el) => {
               return (
-                <Message
-                  key={el.result.messageId}
-                  content={el.result.content}
-                  sender={el.result.senderName}
-                  id={el.result.messageId}
-                ></Message>
+                <div className="msg-container" key={el.messageId}>
+                  {seeners.map((seen) =>
+                    seen[1] === el.messageId ? (
+                      <span
+                        key={Math.round(Math.random() * Math.random() * 99999)}
+                      >{`Seen by ${seen[0]}`}</span>
+                    ) : null
+                  )}
+                  <Message
+                    content={el.content}
+                    sender={el.senderName}
+                    id={el.messageId}
+                    connection={connection}
+                    setMessage={setMessage}
+                    latestChat={latestChat}
+                  ></Message>
+                </div>
               );
             })
           : null}
@@ -146,8 +190,7 @@ function ChatRoom() {
               ? postMsg(
                   document.querySelector(".message-field"),
                   username,
-                  setMessage,
-                  message
+                  connection
                 )
               : null
           }
@@ -158,8 +201,7 @@ function ChatRoom() {
             postMsg(
               document.querySelector(".message-field"),
               username,
-              setMessage,
-              message
+              connection
             );
           }}
         >

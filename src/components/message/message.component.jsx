@@ -5,64 +5,51 @@ import "./message.style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTimes } from "@fortawesome/free-solid-svg-icons";
 
-async function sendNewMsg({ current }, msgId) {
-  try {
-    const userId = JSON.parse(localStorage.getItem("user"));
-    const data = {
-      Content: current.textContent,
-    };
+import MsgLoad from "../message-load/message-load.component";
 
-    const options = {
-      method: "PUT",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userId.token}`,
-      },
-      body: JSON.stringify(data),
-    };
-    const request = await fetch(
-      `http://10.144.0.1:5001/api/message/edit/${msgId}`,
-      options
-    );
-    if (request.ok === true) {
-      console.log("Succesfully edited messages");
-    }
-  } catch (err) {
-    console.error("failed to edit message");
-  }
-}
-
-async function deleteMsg(msgId) {
-  try {
-    const userId = JSON.parse(localStorage.getItem("user"));
-    const options = {
-      method: "DELETE",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userId.token}`,
-      },
-    };
-    const request = await fetch(
-      `http://10.144.0.1:5001/api/message/delete/${msgId}`,
-      options
-    );
-    if (request.ok === true) {
-      console.log("Succesfully deleted messages");
-    }
-  } catch (err) {
-    console.error("failed to deleted message");
-  }
-}
-
-function Message({ content, sender, id }) {
+function Message({
+  content,
+  sender,
+  id,
+  connection,
+  latestChat,
+  setMessage,
+  seeners,
+}) {
   const userId = JSON.parse(localStorage.getItem("user"));
   const messageField = useRef(null);
 
   function editMsg() {
     messageField.current.focus();
     messageField.current.contentEditable = "true";
+  }
+
+  async function editMessage() {
+    try {
+      if (!connection) return;
+      const newMsgContent = { content: messageField.current.textContent };
+      await connection.invoke("EditMessage", id, newMsgContent);
+      console.log("EDITED MSG");
+    } catch (err) {
+      if (err.source === "HubException") {
+        console.error(`${e.message} : ${e.data.user}`);
+      }
+    }
+  }
+
+  async function deleteMessage() {
+    try {
+      if (!connection) return;
+      await connection.invoke("DeleteMessage", id);
+      const newChat = latestChat.current.filter((el) => {
+        if (el.messageId !== id) return el;
+      });
+      setMessage(newChat);
+    } catch (err) {
+      if (err.source === "HubException") {
+        console.error(`${e.message} : ${e.data.user}`);
+      }
+    }
   }
 
   return (
@@ -73,12 +60,13 @@ function Message({ content, sender, id }) {
           : "other"
       }-msg`}
     >
-      <p ref={messageField} onBlur={() => sendNewMsg(messageField, id)}>
+      <p ref={messageField} onBlur={editMessage}>
         {content}
       </p>
+      {id === "loading" ? <MsgLoad></MsgLoad> : null}
       {sender.toLowerCase() === userId.username.toLowerCase() ? (
         <div className="btn-box">
-          <button onClick={() => deleteMsg(id)}>
+          <button onClick={deleteMessage}>
             <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
           </button>
           <button onClick={editMsg}>
