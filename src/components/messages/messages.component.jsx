@@ -92,7 +92,11 @@ function Messages({ friends, setFriends }) {
                 <Link to={`/chat-room/${el.result.userName}`}>
                   <div className="people-cont">
                     <img
-                      src={el.result.image || DefaultPic}
+                      src={
+                        el.result.image
+                          ? `data:image/png;base64,${el.result.image}`
+                          : DefaultPic
+                      }
                       alt="profile-pic"
                     />
                     <div className="info">

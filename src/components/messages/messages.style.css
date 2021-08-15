@@ -43,6 +43,11 @@
   width: 100%;
   cursor: pointer;
 }
+.people-cont img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
 .people-cont span:nth-child(n + 2) {
   font-size: 13px;
 }

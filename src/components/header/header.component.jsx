@@ -28,14 +28,17 @@ function Header({ user, setCurrentUser }) {
       </div>
       <div className="profile-box">
         <span>{user.displayName}</span>
-        <img src={DefaultPic} alt="profile-pic" className="profile-pic" />
+        <img
+          src={user.image ? `data:image/png;base64,${user.image}` : DefaultPic}
+          alt="profile-pic"
+          className="profile-pic"
+        />
         <div className="hide user-box">
           {user ? (
             <button onClick={() => logoutFunc(setCurrentUser)}>Logout</button>
           ) : (
             <button>Sign In</button>
           )}
-          <button>Options</button>
         </div>
       </div>
       {!user ? <Redirect to="/sign-in"></Redirect> : null}

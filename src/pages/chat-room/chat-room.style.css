@@ -44,9 +44,13 @@
 }
 
 .send-btn {
+  display: flex;
+  justify-content: center;
+  align-self: center;
   border: none;
   width: 30px;
   height: 30px;
+  margin-right: 0.3rem;
   border-radius: 50%;
   background-color: var(--primary-color);
   cursor: pointer;
@@ -54,6 +58,10 @@
 .send-btn svg {
   color: var(--secondary-color);
   font-size: 18px;
+  height: 100%;
+}
+.send-btn:hover svg {
+  color: #fff;
 }
 
 .go-back-container {

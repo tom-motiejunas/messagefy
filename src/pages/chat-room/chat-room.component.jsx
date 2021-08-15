@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPaperPlane,
   faArrowAltCircleLeft,
+  faFileAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { Link } from "react-router-dom";
@@ -207,6 +208,18 @@ function ChatRoom() {
         >
           <FontAwesomeIcon icon={faPaperPlane}></FontAwesomeIcon>
         </button>
+        <input
+          type="file"
+          name="input-photo"
+          id="input-photo"
+          accept="image/*"
+          onChange={null}
+          ref={null}
+          hidden
+        />
+        <label htmlFor="input-photo" className="send-btn">
+          <FontAwesomeIcon icon={faFileAlt}></FontAwesomeIcon>
+        </label>
       </footer>
     </main>
   );

@@ -41,6 +41,14 @@ function SideFunction({ setRender }) {
       >
         Friend Requests
       </button>
+      <button
+        onClick={(e) => {
+          addActive(e.target);
+          return setRender("Options");
+        }}
+      >
+        Options
+      </button>
     </aside>
   );
 }
