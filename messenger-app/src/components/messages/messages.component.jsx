@@ -70,6 +70,10 @@ function Messages({ friends, setFriends }) {
       );
       if (request.ok === true) {
         console.log("Succesfully deleted friend");
+        const newFriends = friends.filter(
+          (el) => el.result.userName !== friendsUsername
+        );
+        setFriends(newFriends);
       }
       setLoading(false);
     } catch (err) {
@@ -84,11 +88,15 @@ function Messages({ friends, setFriends }) {
       {friends
         ? friends.map((el) => {
             return (
-              <div className="friend-cont">
-                <Link to={`/chat-room/${el.result.userName}`} key={el.id}>
+              <div className="friend-cont" key={el.id}>
+                <Link to={`/chat-room/${el.result.userName}`}>
                   <div className="people-cont">
                     <img
-                      src={el.result.image || DefaultPic}
+                      src={
+                        el.result.image
+                          ? `data:image/png;base64,${el.result.image}`
+                          : DefaultPic
+                      }
                       alt="profile-pic"
                     />
                     <div className="info">

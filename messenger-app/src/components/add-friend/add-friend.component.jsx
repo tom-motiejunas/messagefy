@@ -41,7 +41,16 @@ function AddFriend() {
       <h2>Add Friend</h2>
       <span>You can add a friend by typing their username</span>
       <div className="search-box">
-        <input type="text" name="userName" id="friend-request" />
+        <input
+          type="text"
+          name="userName"
+          id="friend-request"
+          onKeyPress={(e) => {
+            if (e.code === "Enter") {
+              makeFriendRequest(setLoading);
+            }
+          }}
+        />
         <button onClick={() => makeFriendRequest(setLoading)}>
           <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
         </button>

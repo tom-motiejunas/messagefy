@@ -14,6 +14,7 @@
 }
 .request-info {
   display: flex;
+  align-items: center;
   justify-content: space-around;
   margin-left: 1rem;
 }
@@ -26,6 +27,7 @@
 }
 .request-info button {
   width: 30px;
+  height: 30px;
   border: none;
   font-size: 15px;
   margin: 0 0.3rem;

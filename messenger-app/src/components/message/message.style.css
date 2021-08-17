@@ -7,6 +7,18 @@
   padding: 1rem;
   border-radius: 20px;
 }
+.msg .file-box {
+  width: 100%;
+  height: 30px;
+}
+.msg img {
+  margin-top: 1rem;
+  width: 100%;
+}
+.msg video {
+  width: 100%;
+  margin-top: 0.7em;
+}
 .msg button {
   background-color: rgba(255, 255, 255, 0);
   border: none;
@@ -16,7 +28,7 @@
   right: 10px;
   display: none;
 }
-.msg button:last-child {
+.msg button:nth-child(n + 2) {
   top: 10px;
   right: 35px;
 }

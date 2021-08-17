@@ -6,6 +6,7 @@ import SideFunction from "../../components/side-functions/side-functions.compone
 import AddFriend from "../../components/add-friend/add-friend.component";
 import Messages from "../../components/messages/messages.component";
 import FriendRequests from "../../components/friend-requests/friend-requests.component";
+import Options from "../../components/options/options.component";
 import Notification from "../../components/notification/notification.component";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -22,6 +23,8 @@ function whatToRender(render) {
       return <AddFriend></AddFriend>;
     case "FriendRequests":
       return <FriendRequests></FriendRequests>;
+    case "Options":
+      return <Options></Options>;
     default:
       return <Messages></Messages>;
   }

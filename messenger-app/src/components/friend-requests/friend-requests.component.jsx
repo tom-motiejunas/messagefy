@@ -114,7 +114,14 @@ function FriendRequests({ friendRequests, setFriendRequests }) {
               style={{ cursor: "default" }}
               key={el.id}
             >
-              <img src={el.result.image || DefaultPic} alt="profile-pic" />
+              <img
+                src={
+                  el.result.image
+                    ? `data:image/png;base64,${el.result.image}`
+                    : DefaultPic
+                }
+                alt="profile-pic"
+              />
               <div className="request-info">
                 <span className="name">{el.result.displayName}</span>
                 {!el.result.isOutbound ? (
