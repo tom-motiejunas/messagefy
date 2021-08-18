@@ -2,7 +2,12 @@ import React, { useRef } from "react";
 
 import "./option.style.css";
 
-async function setUserProfile(imgFile) {
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { selectCurrentUser } from "../../redux/user/user.selector";
+import { setCurrentUser } from "../../redux/user/user.action";
+
+async function setUserProfile(imgFile, user, setCurrentUser) {
   try {
     const userId = JSON.parse(localStorage.getItem("user"));
     const formData = new FormData();
@@ -24,18 +29,35 @@ async function setUserProfile(imgFile) {
     );
     if (request.ok === true) {
       console.log("Succesfully changed profile pic");
+
+      // Making file to base64
+      const toBase64 = (file) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = (error) => reject(error);
+        });
+
+      const base64Data = await toBase64(imgFile);
+
+      const newUser = JSON.parse(user);
+      newUser.image = base64Data;
+
+      setCurrentUser(JSON.stringify(newUser));
+      localStorage.setItem("user", JSON.stringify(newUser));
     }
   } catch (err) {
     console.error("Failed to change profile pic", err);
   }
 }
 
-function Options(e) {
+function Options({ user, setCurrentUser }) {
   const inputImage = useRef(null);
 
   function changeAvatar() {
     const imgFile = inputImage.current.files[0];
-    setUserProfile(imgFile);
+    setUserProfile(imgFile, user, setCurrentUser);
   }
 
   return (
@@ -59,4 +81,10 @@ function Options(e) {
   );
 }
 
-export default Options;
+const mapStateToProps = createStructuredSelector({ user: selectCurrentUser });
+
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Options);

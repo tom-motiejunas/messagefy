@@ -18,6 +18,13 @@ function logoutFunc(setCurrentUser) {
 
 function Header({ user, setCurrentUser }) {
   if (!user) return null;
+  // Checking if user is a json or not
+  if (user.constructor !== {}.constructor) user = JSON.parse(user);
+
+  let header = "";
+  if (user.image.split(":")[0] !== "data") {
+    header = "data:image/png;base64,";
+  }
   return (
     <nav className="header-box">
       <img src={logoPic} alt="logo-pic" className="logo-pic" />
@@ -29,7 +36,7 @@ function Header({ user, setCurrentUser }) {
       <div className="profile-box">
         <span>{user.displayName}</span>
         <img
-          src={user.image ? `data:image/png;base64,${user.image}` : DefaultPic}
+          src={user.image ? `${header ? header : ""}${user.image}` : DefaultPic}
           alt="profile-pic"
           className="profile-pic"
         />

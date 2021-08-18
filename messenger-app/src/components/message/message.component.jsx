@@ -20,6 +20,7 @@ function Message({
   const messageField = useRef(null);
 
   const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   function editMsg() {
     messageField.current.focus();
@@ -29,7 +30,7 @@ function Message({
   async function getFile() {
     try {
       const userId = JSON.parse(localStorage.getItem("user"));
-
+      setLoading(true);
       id = content.split(",")[1];
       if (!id) return;
       const options = {
@@ -47,9 +48,9 @@ function Message({
       const data = await request.json();
 
       if (request.ok === true) {
+        setLoading(false);
         // If file is a photo
-        if (data.fileExtension.match(/(jpg|jpeg|png|gif)$/i)) {
-          // const photo = React.createElement('img', {src= `data:image/png;base64,${data.data}`}, null)
+        if (data.fileExtension.match(/(jpg|jpeg|png|gif|webp)$/i)) {
           setFile(
             <img src={`data:image/png;base64,${data.data}`} alt="photo"></img>
           );
@@ -102,6 +103,7 @@ function Message({
   }
 
   async function editMessage() {
+    <MsgLoad></MsgLoad>;
     try {
       if (!connection) return;
       const newMsgContent = { content: messageField.current.textContent };
@@ -152,6 +154,7 @@ function Message({
         </p>
       )}
       {id === "loading" ? <MsgLoad></MsgLoad> : null}
+      {loading ? <MsgLoad></MsgLoad> : null}
       {sender.toLowerCase() === userId.username.toLowerCase() ? (
         <div className="btn-box">
           <button onClick={deleteMessage}>

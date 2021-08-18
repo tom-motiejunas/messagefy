@@ -102,7 +102,9 @@ function Messages({ friends, setFriends }) {
                     <div className="info">
                       <span className="name">{el.result.displayName}</span>
                       <span className="last-msg">
-                        {el.result.lastMessageContent}
+                        {el.result.lastMessageIsReferenceToFile
+                          ? "file"
+                          : el.result.lastMessageContent}
                       </span>
                       <span className="last-msg-time">
                         {el.result.lastMessageDate ? (
