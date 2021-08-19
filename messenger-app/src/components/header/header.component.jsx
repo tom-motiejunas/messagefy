@@ -22,7 +22,8 @@ function Header({ user, setCurrentUser }) {
   if (user.constructor !== {}.constructor) user = JSON.parse(user);
 
   let header = "";
-  if (user.image.split(":")[0] !== "data") {
+
+  if (user.image && user.image.split(":")[0] !== "data") {
     header = "data:image/png;base64,";
   }
   return (

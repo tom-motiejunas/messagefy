@@ -1,6 +1,6 @@
 import React from "react";
 
-import "./side-function.style.css";
+import "./side-functions.style.css";
 
 function addActive(element) {
   //Removes all active class from all buttons
@@ -23,7 +23,7 @@ function SideFunction({ setRender }) {
           return setRender("Messages");
         }}
       >
-        Messages
+        Friends
       </button>
       <button
         onClick={(e) => {
@@ -40,6 +40,22 @@ function SideFunction({ setRender }) {
         }}
       >
         Friend Requests
+      </button>
+      <button
+        onClick={(e) => {
+          addActive(e.target);
+          return setRender("Groups");
+        }}
+      >
+        Groups
+      </button>
+      <button
+        onClick={(e) => {
+          addActive(e.target);
+          return setRender("AddGroup");
+        }}
+      >
+        Add Group
       </button>
       <button
         onClick={(e) => {

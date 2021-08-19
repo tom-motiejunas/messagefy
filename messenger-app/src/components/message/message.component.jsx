@@ -22,6 +22,8 @@ function Message({
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  if (!sender) sender = "system";
+
   function editMsg() {
     messageField.current.focus();
     messageField.current.contentEditable = "true";

@@ -5,13 +5,7 @@ import "./message-input.style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 
-function MsgInput({
-  friendsUsername,
-  connection,
-  setMessage,
-  seenMessage,
-  latestChat,
-}) {
+function MsgInput({ chatId, connection, setMessage, seenMessage, latestChat }) {
   const fileRef = useRef(null);
   const msgFieldRef = useRef(null);
   const userId = JSON.parse(localStorage.getItem("user"));
@@ -35,13 +29,8 @@ function MsgInput({
         senderName: userId.username,
         dateEdited: null,
       };
-
       await setMessage([msgToAdd, ...latestChat.current]);
-      let sendedMsg = await connection.invoke(
-        "PostMessage",
-        friendsUsername,
-        msgToSend
-      );
+      let sendedMsg = await connection.invoke("PostMessage", chatId, msgToSend);
       const msgNoLoadArr = latestChat.current.filter(
         (el) => el.messageId !== "loading"
       );
@@ -75,7 +64,7 @@ function MsgInput({
       };
       delete options.headers["Content-Type"];
       const request = await fetch(
-        `http://10.144.0.1:5001/api/file/sendmessage/${friendsUsername}`,
+        `http://10.144.0.1:5001/api/file/sendmessage/${chatId}`,
         options
       );
       if (request.ok === true) {

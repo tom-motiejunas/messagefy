@@ -89,7 +89,7 @@ function Messages({ friends, setFriends }) {
         ? friends.map((el) => {
             return (
               <div className="friend-cont" key={el.id}>
-                <Link to={`/chat-room/${el.result.userName}`}>
+                <Link to={`/chat-room/${el.result.conversationId}`}>
                   <div className="people-cont">
                     <img
                       src={

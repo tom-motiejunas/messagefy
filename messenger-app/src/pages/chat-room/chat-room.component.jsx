@@ -14,7 +14,7 @@ import MsgInput from "../../components/message-input/message-input.component";
 
 function ChatRoom() {
   const [message, setMessage] = useState([]);
-  const username = document.URL.split("/").pop();
+  const chatId = document.URL.split("/").pop();
 
   const [connection, setConnection] = useState(null);
   const [seeners, setSeeners] = useState([]);
@@ -49,7 +49,7 @@ function ChatRoom() {
     try {
       if (!connection) return;
 
-      await connection.invoke("DownloadMessages", username, num);
+      await connection.invoke("DownloadMessages", chatId, num);
     } catch (err) {
       if (err.source === "HubException") {
         console.error(`${e.message} : ${e.data.user}`);
@@ -62,14 +62,14 @@ function ChatRoom() {
       if (!connection) return;
       await connection.invoke(
         "SeenMessage",
-        username,
+        chatId,
         latestChat.current[0].messageId
       );
-      const friendSeen = await connection.invoke("GetSeenMessageId", username);
+      const friendSeen = await connection.invoke("GetSeenMessageId", chatId);
       // Setting seen messages of people
       setSeeners([
-        [userId.username, latestChat.current[0].messageId],
-        [username, friendSeen.messageId],
+        [userId.chatId, latestChat.current[0].messageId],
+        [chatId, friendSeen.messageId],
       ]);
     } catch (err) {
       if (err.source === "HubException") {
@@ -85,8 +85,6 @@ function ChatRoom() {
         .then(() => {
           getMessages(connection);
           connection.on("ReceiveMessage", async (msg) => {
-            if (msg.senderName !== username) return;
-            console.log("ok");
             setMessage([msg, ...latestChat.current]);
             seenMessage(connection);
           });
@@ -111,7 +109,7 @@ function ChatRoom() {
           connection.on("SeenMessage", async (msg) => {
             setSeeners([
               [userId.username, msg.messageId],
-              [username, msg.messageId],
+              [chatId, msg.messageId],
             ]);
           });
         })
@@ -167,7 +165,7 @@ function ChatRoom() {
           : null}
       </section>
       <MsgInput
-        friendsUsername={username}
+        chatId={chatId}
         connection={connection}
         setMessage={setMessage}
         seenMessage={seenMessage}

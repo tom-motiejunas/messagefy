@@ -6,6 +6,8 @@ import SideFunction from "../../components/side-functions/side-functions.compone
 import AddFriend from "../../components/add-friend/add-friend.component";
 import Messages from "../../components/messages/messages.component";
 import FriendRequests from "../../components/friend-requests/friend-requests.component";
+import AddGroup from "../../components/add-group/add-group.component";
+import Groups from "../../components/groups/groups.component";
 import Options from "../../components/options/options.component";
 import Notification from "../../components/notification/notification.component";
 import { connect } from "react-redux";
@@ -19,6 +21,10 @@ function whatToRender(render) {
   switch (render) {
     case "Messages":
       return <Messages></Messages>;
+    case "Groups":
+      return <Groups></Groups>;
+    case "AddGroup":
+      return <AddGroup></AddGroup>;
     case "AddFriend":
       return <AddFriend></AddFriend>;
     case "FriendRequests":

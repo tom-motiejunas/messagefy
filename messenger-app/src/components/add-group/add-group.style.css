@@ -1,0 +1,120 @@
+.group-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 700px;
+  max-width: 1100px;
+  flex: 1;
+  margin: 2rem 4rem;
+  overflow: auto;
+}
+.group-box h1 {
+  margin: 0;
+  padding: 0;
+}
+.group-box span {
+  padding: 0.7rem 0;
+}
+.create-group-box {
+  display: flex;
+}
+.display-group-options {
+  border-radius: 50%;
+  border: none;
+  background-color: var(--tertiary-color);
+  font-size: 14px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  cursor: pointer;
+  padding-left: 0.1rem;
+  margin-left: 1rem;
+}
+
+/* Option table */
+.group-option-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--tertiary-color);
+  transition: visibility 1s, opacity 1s;
+}
+.group-option-box header {
+  display: flex;
+  width: 100%;
+}
+.group-option-box header input {
+  flex: 1;
+  margin: 1rem 0rem 1rem 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: none;
+}
+.group-option-box header input:focus {
+  outline: none;
+}
+.group-option-box header button {
+  margin: 1rem;
+  width: 30px;
+  font-size: 20px;
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
+  cursor: pointer;
+}
+.group-friend-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+}
+.group-friend-list li {
+  background-color: var(--tertiary-color);
+  display: flex;
+  align-items: center;
+  margin: 0 1rem;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+.group-friend-list li:hover {
+  background-color: var(--secondary-color);
+}
+.group-friend-list li img {
+  margin-right: 1rem;
+  width: 50px;
+  height: 50px;
+}
+.group-friend-list li h3 {
+  flex: 1;
+}
+.group-friend-list li input {
+  border: var(--tertiary-color);
+  outline: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+.create-group-btn {
+  margin-bottom: 1.5rem;
+  font-size: 20px;
+  border-radius: 10px;
+  padding: 0.5rem;
+  background-color: var(--secondary-color);
+  border: none;
+  cursor: pointer;
+}
+.create-group-btn:hover {
+  background-color: var(--primary-color);
+}
+
+.hidden {
+  opacity: 0 !important;
+  visibility: hidden;
+}
