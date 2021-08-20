@@ -60,21 +60,43 @@ function ChatRoom() {
   async function seenMessage(connection) {
     try {
       if (!connection) return;
-      await connection.invoke(
-        "SeenMessage",
-        chatId,
-        latestChat.current[0].messageId
-      );
-      const friendSeen = await connection.invoke("GetSeenMessageId", chatId);
+      await connection.invoke("SeenMessage", latestChat.current[0].messageId);
       // Setting seen messages of people
-      setSeeners([
-        [userId.chatId, latestChat.current[0].messageId],
-        [chatId, friendSeen.messageId],
-      ]);
     } catch (err) {
       if (err.source === "HubException") {
         console.error(`${e.message} : ${e.data.user}`);
       }
+    }
+  }
+
+  async function getUserDetails() {
+    try {
+      const userId = JSON.parse(localStorage.getItem("user"));
+
+      const options = {
+        method: "GET",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userId.token}`,
+        },
+      };
+      const request = await fetch(
+        `http://10.144.0.1:5001/api/group/userdetails/${chatId}`,
+        options
+      );
+      if (request.ok === true) {
+        console.log("Succesfully got all users details");
+        const data = await request.json();
+
+        const seenData = [];
+        data.forEach((el) =>
+          seenData.push([el.displayName, el.lastSeenMessageId])
+        );
+        setSeeners(seenData);
+      }
+    } catch (err) {
+      console.error("failed to get all users details", err);
     }
   }
 
@@ -91,6 +113,7 @@ function ChatRoom() {
           connection.on("ReceiveMessages", async (allMsgs) => {
             if (allMsgs.length === 0) return;
             setMessage([...latestChat.current, ...allMsgs]);
+            getUserDetails();
             seenMessage(connection);
             setLoadingMsg(false);
           });
@@ -107,9 +130,10 @@ function ChatRoom() {
             setMessage(newChat);
           });
           connection.on("SeenMessage", async (msg) => {
+            console.log(msg);
             setSeeners([
               [userId.username, msg.messageId],
-              [chatId, msg.messageId],
+              [msg.senderName, msg.messageId],
             ]);
           });
         })
