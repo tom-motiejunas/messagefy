@@ -15,6 +15,7 @@ function Message({
   latestChat,
   setMessage,
   isFile,
+  userImg,
 }) {
   const userId = JSON.parse(localStorage.getItem("user"));
   const messageField = useRef(null);

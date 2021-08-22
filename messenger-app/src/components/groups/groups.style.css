@@ -11,6 +11,7 @@
 }
 .group-cont {
   display: flex;
+  position: relative;
   width: 100%;
 }
 .group-cont:hover {
@@ -36,9 +37,9 @@
 }
 .group-option {
   display: none;
-  position: fixed;
+  position: absolute;
   list-style: none;
-  right: 20px;
+  right: 0px;
   margin: 3.4rem 0;
   z-index: 10;
   cursor: pointer;

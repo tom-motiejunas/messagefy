@@ -12,6 +12,8 @@ import { Link } from "react-router-dom";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import MsgInput from "../../components/message-input/message-input.component";
 
+import DefaultPic from "../../assets/img/default-profile.png";
+
 function ChatRoom() {
   const [message, setMessage] = useState([]);
   const chatId = document.URL.split("/").pop();
@@ -24,6 +26,7 @@ function ChatRoom() {
   const latestChat = useRef(null);
   const msgBoxRef = useRef(null);
   const loadMsgNumRef = useRef(null);
+  const userImgs = useRef({});
 
   const userId = JSON.parse(localStorage.getItem("user"));
 
@@ -88,11 +91,11 @@ function ChatRoom() {
       if (request.ok === true) {
         console.log("Succesfully got all users details");
         const data = await request.json();
-
         const seenData = [];
-        data.forEach((el) =>
-          seenData.push([el.displayName, el.lastSeenMessageId])
-        );
+        data.forEach((el) => {
+          seenData.push([el.displayName, el.lastSeenMessageId]);
+          userImgs.current[el.username] = el.image;
+        });
         setSeeners(seenData);
       }
     } catch (err) {
@@ -174,15 +177,32 @@ function ChatRoom() {
                       >{`Seen by ${seen[0]}`}</span>
                     ) : null
                   )}
-                  <Message
-                    content={el.content}
-                    sender={el.senderName}
-                    id={el.messageId}
-                    isFile={el.isReferenceToFile}
-                    connection={connection}
-                    setMessage={setMessage}
-                    latestChat={latestChat}
-                  ></Message>
+                  <div
+                    className={`msg-content ${
+                      el.senderName !== userId.username ? "other" : null
+                    }`}
+                  >
+                    <img
+                      src={
+                        userImgs.current[el.senderName]
+                          ? `data:image/png;base64,${
+                              userImgs.current[el.senderName]
+                            }`
+                          : DefaultPic
+                      }
+                      alt="user-pic"
+                      className="user-pic"
+                    />
+                    <Message
+                      content={el.content}
+                      sender={el.senderName}
+                      id={el.messageId}
+                      isFile={el.isReferenceToFile}
+                      connection={connection}
+                      setMessage={setMessage}
+                      latestChat={latestChat}
+                    ></Message>
+                  </div>
                 </div>
               );
             })
